@@ -42,7 +42,7 @@ const getHttpStatusFromLogLine = (line) =>
 
 // Given an S3 Server Access Log line, return the S3 operation of the request
 const getOperationFromLogLine = (line) => {
-  const result = line.match(/\s+([A-Z]+\.[A-Z]+\.[A-Z]+)\s+/);
+  const result = line.match(/\s+([A-Z]+\.[A-Z]+\.[A-Z_]+)\s+/);
 
   return result ? result[1] : null;
 };
@@ -112,6 +112,7 @@ const logEventsFromAccessLog = compose([logLinesToLogEvents, splitLines, trim]);
 // Given a stack name and an access log, return a list of metric data objects
 const metricDataObjectsFromAccessLog = curry((stack, accessLog) => {
   const logEvents = logEventsFromAccessLog(accessLog);
+  console.log('logEvents', JSON.stringify(logEvents));
   const getObjectLogEvents = selectGetObjectLogEvents(logEvents);
   return flatten([
     getSuccessMetricDataObjects(stack, getObjectLogEvents),
@@ -156,6 +157,7 @@ const s3ParamsFromRecord = (record) => ({
 
 // Handle an S3 object upload event
 const handleEvent = (event, stack) => {
+  console.log('event', JSON.stringify(event));
   const logLocations = event.Records.map(s3ParamsFromRecord);
 
   return getMetricDataFromAccessLogs(stack, logLocations)

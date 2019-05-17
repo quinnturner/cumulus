@@ -36,6 +36,12 @@ test('getOperationFromLogLine() returns the S3 operation of the log event', (t) 
   t.is(index.getOperationFromLogLine(logLine), 'REST.GET.VERSIONING');
 });
 
+test('getOperationFromLogLine() returns the S3 operation of the log event for hyphenated event', (t) => {
+  const logLine = '79a59df900b949e55d96a1e698fbacedfd6e09d98eacf8f8d5218e7cd47ef2be awsexamplebucket [17/May/2019:16:42:58 +0000] 10.247.175.36 arn:aws:sts::000000000000:assumed-role/aws-config-role/AWSConfig-Describe 9E78F592E591328F REST.GET.LOGGING_STATUS - "GET /?logging HTTP/1.1" 200 - 278 - 5 - "-" "AWSConfig" - Njc5Jfv//rH2hfUG+usf27+Z0Yyu41iVW8NT3wwwD1e7jFOIfYynm8MRa5IWuSCO1NrmBFf2LNs= SigV4 ECDHE-RSA-AES128-SHA AuthHeader awsexamplebucket.s3.amazonaws.com TLSv1.2';
+
+  t.is(index.getOperationFromLogLine(logLine), 'REST.GET.LOGGING_STATUS');
+});
+
 test('getFailureMetricDataObjects() returns the expected result', (t) => {
   const logEvents = [
     // Should be included in period 1
